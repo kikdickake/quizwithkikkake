@@ -35,7 +35,7 @@
         <div id="blocked-screen" style="display: none;">
             <h2>🚫 Ой-ой, ты уже проходил(а)! 😿</h2>
             <p id="blocked-msg"></p>
-            
+
             <!-- Сюда будут подгружаться результаты всех учеников -->
             <hr class="cute-hr">
             <div id="leaderboard-container" style="text-align: left; background: #fff5f7; padding: 15px; border-radius: 10px; border: 2px dashed #ffb6c1; margin-top: 15px;">
@@ -49,23 +49,26 @@
         <button id="reset-btn" class="reset-btn">🔒 Сброс (для учителя)</button>
     </div>
 
-    <!-- ПОДКЛЮЧАЕМ СТАБИЛЬНЫЙ FIREBASE ДЛЯ БРАУЗЕРА -->
-  <script src="https://gstatic.com"></script>
-<script src="https://gstatic.com"></script>
+    <!-- ПОДКЛЮЧАЕМ FIREBASE -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
         // Инициализируем Firebase с твоими ключами проекта kikkake
-       const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyAtj5rZMScMrgAqdLpCPYG8a3ujg40Cywk",
-            authDomain: "://firebaseapp.com",
-            databaseURL: "https://firebasedatabase.app",
+            authDomain: "kikkake-7dba7.firebaseapp.com",
+            databaseURL: "https://kikkake-7dba7-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "kikkake-7dba7",
             storageBucket: "kikkake-7dba7.firebasestorage.app",
             messagingSenderId: "20803241306",
             appId: "1:20803241306:web:c16adeb9e5cdca12e85f63"
         };
-        
-        firebase.initializeApp(firebaseConfig);
+
+        // Инициализация Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
         const database = firebase.database();
 
         // Все 15 вопросов
@@ -124,7 +127,8 @@
                 question: "11. Что означает слово «уникальный» применительно к первичному ключу?",
                 options: ["Значение обязательно должно быть длинным", "Значение не повторяется ни у одной другой записи", "Значение состоит строго из заглавных букв", "Значение выбирается случайно системой"],
                 answer: 1
-            },{
+            },
+            {
                 question: "12. Что может храниться в таблице «Студенты»?",
                 options: ["Только музыка и видеоклипы", "Только системные программы", "Имя, группа и номер студента", "Пароли всех пользователей"],
                 answer: 2
@@ -182,12 +186,12 @@
                 regError.innerText = "Пожалуйста, введи имя! 😿";
                 return;
             }
-            
+
             userName = name;
             regScreen.style.display = "none";
             quizScreen.style.display = "block";
             playerNameSpan.innerText = userName;
-            
+
             loadQuestion();
         };
 
@@ -243,7 +247,7 @@
         function finishQuiz() {
             localStorage.setItem("quiz_completed_user", userName);
             localStorage.setItem("quiz_score", score);
-            
+
             // ОТПРАВКА В БАЗУ ДАННЫХ FIREBASE
             database.ref('results/').push({
                 name: userName,
@@ -260,32 +264,32 @@
             regScreen.style.display = "none";
             quizScreen.style.display = "none";
             blockedScreen.style.display = "block";
-            
+
             blockedMsg.innerText = "С этого устройства тест уже проходил(а) " + name + ".\nРезультат: " + savedScore + " из " + questions.length + " баллов.\nПовторное прохождение запрещено! 🐾";
-            
+
             // ЗАГРУЗКА РЕЗУЛЬТАТОВ ВСЕХ УЧЕНИКОВ ИЗ БАЗЫ
             loadLeaderboard();
         }
 
         function loadLeaderboard() {
             const listContainer = document.getElementById("leaderboard-list");
-            
+
             database.ref('results/').on('value', function(snapshot) {
                 const data = snapshot.val();
                 if (data) {
                     let html = "<ol style='padding-left: 20px; color: #333; margin: 0;'>";
                     Object.keys(data).forEach(function(key) {
-                        const record = data[key];
-                        html += `<li style='margin-bottom: 6px;'><b>${record.name}</b>: ${record.score} баллов <small style='color: gray; font-size: 11px;'>(${record.date})</small></li>`;
-                    });
-                    html += "</ol>";
-                    listContainer.innerHTML = html;
-                } else {
-                    listContainer.innerHTML = "<p style='color: gray; text-align: center; margin: 0;'>Тут пока пусто. Стань первым! 💕</p>";
-                }
+                const record = data[key];
+                html += `<li style='margin-bottom: 6px;'><b>${record.name}</b>: ${record.score} баллов <small style='color: gray; font-size: 11px;'>(${record.date})</small></li>`;
+            });
+            html += "</ol>";
+            listContainer.innerHTML = html;
+        } else {
+            listContainer.innerHTML = "<p style='color: gray; text-align: center; margin: 0;'>Тут пока пусто. Стань первым! 💕</p>";
+        }
             });
         }
- }
+
         // Пароль на сброс: 131095
         resetBtn.onclick = function() {
             const password = prompt("Введи пароль для сброса попытки: 🔑");
