@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Реляционная база данных Тест 🌸</title>
+    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+    <div id="quiz-container">
+        <h1>🌸 Реляционная база данных Тест 🎀</h1>
+
+        <!-- ЭКРАН 1: РЕГИСТРАЦИЯ -->
+        <div id="registration-screen">
+            <div class="avatar-badge">✨ ฅ(•ㅅ•)ฅ ✨</div>
+            <h2>Добро пожаловать, лапочка! 💕</h2>
+            <p>Введи своё имя, чтобы начать милый тест:</p>
+            <input type="text" id="username-input" placeholder="Твоё имя... 💖" />
+            <br>
+            <button id="start-btn" class="cute-btn">Начать тест 🐾</button>
+            <p id="reg-error" class="error-msg"></p>
+        </div>
+
+        <!-- ЭКРАН 2: САМ ТЕСТ -->
+        <div id="quiz-screen" style="display: none;">
+            <div id="score-board">🎀 Игрок: <span id="player-name"></span> | 💖 Баллы: <span id="score">0</span></div>
+            <h2 id="question">Загрузка вопроса...</h2>
+            <div id="options-container"></div>
+            <p id="message"></p>
+            <button id="next-btn" class="cute-btn" style="display: none;">Дальше ✨</button>
+        </div>
+
+        <!-- ЭКРАН 3: БЛОКИРОВКА -->
+        <div id="blocked-screen" style="display: none;">
+            <h2>🚫 Ой-ой, ты уже проходил(а)! 😿</h2>
+            <p id="blocked-msg"></p>
+        </div>
+
+        <!-- КНОПКА СБРОСА -->
+        <hr class="cute-hr">
+        <button id="reset-btn" class="reset-btn">🔒 Сброс (для учителя)</button>
+    </div>
+
+    <script>
+        // Все 15 вопросов с РАЗБРОСАННЫМИ ответами
+        const questions = [
+            {
+                question: "1. Что такое реляционная база данных?",
+                options: [
+                    "Программа для создания презентаций",
+                    "База данных, где информация хранится в связанных таблицах",
+                    "Операционная система",
+                    "Антивирусная программа"
+                ],
+                answer: 1
+            },
+            {
+                question: "2. Из чего состоит таблица в базе данных?",
+                options: [
+                    "Из файлов и папок",
+                    "Из программ и приложений",
+                    "Из строк и столбцов",
+                    "Из изображений"
+                ],
+                answer: 2
+            },
+            {
+                question: "3. Что такое строка в таблице?",
+                options: [
+                    "Запись об одном конкретном объекте",
+                    "Название всей таблицы",
+                    "Секретный код базы данных",
+                    "Математическая формула"
+                ],
+                answer: 0
+            },
+            {
+                question: "4. Что такое столбец в таблице?",
+                options: [
+                    "Отдельная база данных",
+                    "Пароль от компьютера",
+                    "Программа для редактирования",
+                    "Отдельная характеристика (поле) объекта"
+                ],
+                answer: 3
+            },
+            {
+                question: "5. Что такое первичный ключ (Primary Key)?",
+                options: [
+                    "Пароль от базы данных",
+                    "Поле, которое однозначно определяет каждую запись",
+                    "Название самой таблицы",
+                    "Любое число в таблице"
+                ],
+                answer: 1
+            },
+            {
+                question: "6. Каким должно быть значение первичного ключа?",
+                options: [
+                    "Одинаковым для всех записей",
+                    "Только текстовым",
+                    "Уникальным для каждой записи",
+                    "Только очень большим числом"
+                ],
+                answer: 2
+            },
+            {
+                question: "7. Может ли первичный ключ повторяться у разных записей?",
+                options: [
+                    "Да, всегда",
+                    "Нет, он никогда не повторяется",
+                    "Только в очень больших таблицах",
+                    "Только если это слово, а не число"
+                ],
+                answer: 1
+            },
+            {
+                question: "8. Зачем нужен первичный ключ?",
+                options: [
+                    "Чтобы полностью удалить базу данных",
+                    "Чтобы изменить цвет оформления таблицы",
+                    "Чтобы увеличить размер файла",
+                    "Чтобы однозначно идентифицировать запись"
+                ],
+                answer: 3
+            },
+            {
+                question: "9. В таблице студентов (ID, Имя, Группа) какое поле лучше всего подходит для первичного ключа?",
+                options: [
+                    "Имя",
+                    "Группа",
+                    "ID",
+                    "Ни одно из перечисленных"
+                ],
+                answer: 2
+            },
+            {
+                question: "10. Какой из вариантов лучше всего подходит для первичного ключа ученика?",
+                options: [
+                    "Уникальный номер ученика (ИИН / ID)",
+                    "Имя ученика",
+                    "Дата рождения",
+                    "Номер группы или класса"
+                ],
+                answer: 0
+            },
+            {
+                question: "11. Что означает слово «уникальный» применительно к первичному ключу?",
+                options: [
+                    "Значение обязательно должно быть длинным",
+                    "Значение не повторяется ни у одной другой записи",
+                    "Значение состоит строго из заглавных букв",
+                    "Значение выбирается случайно системой"
+                ],
+                answer: 1
+            },
+            {
+                question: "12. Что может храниться в таблице «Студенты»?",
+                options: [
+                    "Только музыка и видеоклипы",
+                    "Только системные программы",
+                    "Имя, группа и номер студента",
+                    "Пароли всех пользователей"
+                ],
+                answer: 2
+            },
+            {
+                question: "13. Если у студента ID = 25, что это означает?",
+                options: [
+                    "Уникальный идентификатор этого студента в базе",
+                    "Его среднюю оценку за семестр",
+                    "Номер его группы",
+                    "Количество изученных предметов"
+                ],
+                answer: 0
+            },
+            {
+                question: "14. Что произойдёт, если двум студентам попытаться присвоить один и тот же первичный ключ?",
+                options: [
+                    "Это абсолютно допустимо",
+                    "Таблица автоматически удалится",
+                    "Возникнет ошибка, так как первичный ключ должен быть уникальным",
+                    "Ничего не произойдёт, всё сохранится"
+                ],
+                answer: 2
+            },
+            {
+                question: "15. В таблице товаров (ID, Товар, Цена) почему ID подходит для первичного ключа?",
+                options: [
+                    "Потому что ID всегда указывает на размер товара",
+                    "Потому что ID уникален для каждого товара и не повторяется",
+                    "Потому что ID всегда равен цене",
+                    "Потому что ID содержит название магазина"
+                ],
+                answer: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userName = "";
+
+        const regScreen = document.getElementById("registration-screen");
+        const quizScreen = document.getElementById("quiz-screen");
+        const blockedScreen = document.getElementById("blocked-screen");
+
+        const usernameInput = document.getElementById("username-input");
+        const startBtn = document.getElementById("start-btn");
+        const regError = document.getElementById("reg-error");
+
+        const playerNameSpan = document.getElementById("player-name");
+        const scoreSpan = document.getElementById("score");
+        const questionEl = document.getElementById("question");
+        const optionsContainer = document.getElementById("options-container");
+        const messageEl = document.getElementById("message");
+        const nextBtn = document.getElementById("next-btn");
+        const blockedMsg = document.getElementById("blocked-msg");
+        const resetBtn = document.getElementById("reset-btn");
+
+        // Проверка блокировки
+        window.onload = function() {
+            const savedUser = localStorage.getItem("quiz_completed_user");
+            if (savedUser) {
+                showBlockedScreen(savedUser);
+            }
+        };
+
+        // Старт
+        startBtn.onclick = function() {
+            const name = usernameInput.value.trim();
+            if (!name) {
+                regError.innerText = "Пожалуйста, введи имя! 😿";
+                return;
+            }
+            
+            userName = name;
+            regScreen.style.display = "none";
+            quizScreen.style.display = "block";
+            playerNameSpan.innerText = userName;
+            
+            loadQuestion();
+        };
+
+        function loadQuestion() {
+            messageEl.innerText = "";
+            nextBtn.style.display = "none";
+            optionsContainer.innerHTML = "";
+
+            const currentQ = questions[currentQuestionIndex];
+            questionEl.innerText = currentQ.question;
+
+            currentQ.options.forEach(function(optionText, index) {
+                const btn = document.createElement("button");
+                btn.innerText = optionText;
+                btn.classList.add("option-btn");
+                btn.onclick = function() { selectOption(index, btn); };
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectOption(selectedIndex, selectedBtn) {
+            const currentQ = questions[currentQuestionIndex];
+            const allBtns = optionsContainer.querySelectorAll(".option-btn");
+
+            allBtns.forEach(function(btn) { btn.disabled = true; });
+
+            if (selectedIndex === currentQ.answer) {
+                selectedBtn.classList.add("correct");
+                messageEl.innerText = "🔥 Красавчик! Ответ верный!";
+                messageEl.style.color = "#2ed573";
+                score++;
+                scoreSpan.innerText = score;
+            } else {
+                selectedBtn.classList.add("wrong");
+                allBtns[currentQ.answer].classList.add("correct");
+                messageEl.innerText = "❌ Неудачник! Читай конспект!";
+                messageEl.style.color = "#ff4757";
+            }
+
+            if (currentQuestionIndex < questions.length - 1) {
+                nextBtn.style.display = "inline-block";
+            } else {
+                setTimeout(finishQuiz, 1200);
+            }
+        }
+
+        nextBtn.onclick = function() {
+            currentQuestionIndex++;
+            loadQuestion();
+        };
+
+        function finishQuiz() {
+            localStorage.setItem("quiz_completed_user", userName);
+            localStorage.setItem("quiz_score", score);
+            showBlockedScreen(userName);
+        }
+
+        function showBlockedScreen(name) {
+            const savedScore = localStorage.getItem("quiz_score") || score;
+            regScreen.style.display = "none";
+            quizScreen.style.display = "none";
+            blockedScreen.style.display = "block";
+            
+            blockedMsg.innerText = "С этого устройства тест уже проходил(а) " + name + ".\nРезультат: " + savedScore + " из " + questions.length + " баллов.\nПовторное прохождение запрещено! 🐾";
+        }
+
+        // Пароль на сброс: 131095
+        resetBtn.onclick = function() {
+            const password = prompt("Введи пароль для сброса попытки: 🔑");
+            if (password === "131095") {
+                localStorage.clear();
+                alert("Попытка успешно сброшена! ✨");
+                location.reload();
+            } else if (password !== null) {
+                alert("Неверный пароль! 😿");
+            }
+        };
+    </script>
+</body>
+</html>
